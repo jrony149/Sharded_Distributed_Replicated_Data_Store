@@ -165,30 +165,6 @@ def handle_put(key):
     
     return ring_traversal(payload, key, key_hash_id, "p")
 
-    # if len(state.view) == 1 and state.view[0] == state.address: return sender(state.view[0],"store_key",key,"p",payload)
-    # if key_hash_id in state.set_of_local_ids: return sender(state.address,"store_key",key,"p",payload) 
-    # if key_hash_id < state.finger_table[0][0]:
-    #     if (key_hash_id < state.lowest_hash_id) and (key_hash_id < state.predecessor[0]) and (state.predecessor[0] > state.lowest_hash_id):
-    #         return sender(state.address,"store_key",key,"p",payload)
-    #     elif key_hash_id < state.lowest_hash_id: return sender(state.predecessor[1],"kvs/keys",key,"p",payload)
-    #     else: return sender(state.finger_table[0][1],"store_key",key,"p",payload)
-    # if key_hash_id > state.finger_table[-1][0]:
-    #     if state.finger_table[-1][0] == state.max_address[0]: 
-    #         return sender(state.min_address[1],"store_key",key,"p",payload)
-    #     else: return sender(state.finger_table[-1][1],"kvs/keys",key,"p",payload)
-    # if len(state.finger_table) > 1:
-    #     bounds = state.maps_to(key_hash_id)
-    #     if bounds["upper bound"][2] == 1:
-    #         pred_of_first_finger = state.immediate_pred(bounds["upper bound"][0])
-    #         if key_hash_id > pred_of_first_finger and key_hash_id <= bounds["upper bound"][0]:
-    #             return sender(bounds["upper bound"][1],"store_key",key,"p",payload)
-    #         elif key_hash_id > pred_of_first_finger and bounds["upper bound"][0] < bounds["lower bound"][0]:
-    #             return sender(bounds["upper bound"][1],"store_key",key,"p",payload)
-    #         else: return sender(bounds["lower bound"][1],"kvs/keys",key,"p",payload)
-    #     else: return sender(bounds["lower bound"][1],"kvs/keys",key,"p",payload)
-    # else: return sender(state.finger_table[0][1],"kvs/keys",key,"p",payload)
-    # return json.dumps({"message":"Server is down!"}), 400   
-
 @app.route('/kvs/keys/<key>', methods=['GET'])
 def handle_get(key):
     global state 
@@ -198,30 +174,6 @@ def handle_get(key):
 
     return ring_traversal(payload, key, key_hash_id, "g")
     
-    # if len(state.view) == 1 and state.view[0] == state.address: return sender(state.view[0],"store_key",key,"g",payload)
-    # if key_hash_id in state.set_of_local_ids: return sender(state.address,"store_key",key,"g",payload) 
-    # if key_hash_id < state.finger_table[0][0]:
-    #     if (key_hash_id < state.lowest_hash_id) and (key_hash_id < state.predecessor[0]) and (state.predecessor[0] > state.lowest_hash_id):
-    #         return sender(state.address,"store_key",key,"g",payload)
-    #     elif key_hash_id < state.lowest_hash_id: return sender(state.predecessor[1],"kvs/keys",key,"g",payload)
-    #     else: return sender(state.finger_table[0][1],"store_key",key,"g",payload)
-    # if key_hash_id > state.finger_table[-1][0]:
-    #     if state.finger_table[-1][0] == state.max_address[0]: 
-    #         return sender(state.min_address[1],"store_key",key,"g",payload)
-    #     else: return sender(state.finger_table[-1][1],"kvs/keys",key,"g",payload)
-    # if len(state.finger_table) > 1:
-    #     bounds = state.maps_to(key_hash_id)
-    #     if bounds["upper bound"][2] == 1:
-    #         pred_of_first_finger = state.immediate_pred(bounds["upper bound"][0])
-    #         if key_hash_id > pred_of_first_finger and key_hash_id <= bounds["upper bound"][0]:
-    #             return sender(bounds["upper bound"][1],"store_key",key,"g",payload)
-    #         elif key_hash_id > pred_of_first_finger and bounds["upper bound"][0] < bounds["lower bound"][0]:
-    #             return sender(bounds["upper bound"][1],"store_key",key,"g",payload)
-    #         else: return sender(bounds["lower bound"][1],"kvs/keys",key,"g",payload)
-    #     else: return sender(bounds["lower bound"][1],"kvs/keys",key,"g",payload)
-    # else: return sender(state.finger_table[0][1],"kvs/keys",key,"g",payload)
-    # return json.dumps({"message":"Server is down!"}), 400
-    
 @app.route('/kvs/keys/<key>', methods=['DELETE'])
 def handle_delete(key):
     global state 
@@ -229,32 +181,8 @@ def handle_delete(key):
     address_present = "address" in data
     payload["address"] = data["address"] if address_present else state.address
 
-    ring_traversal(payload, key, key_hash_id, "d")
+    return ring_traversal(payload, key, key_hash_id, "d")
     
-    # if len(state.view) == 1 and state.view[0] == state.address: return sender(state.view[0],"store_key",key,"d",payload)
-    # if key_hash_id in state.set_of_local_ids: return sender(state.address,"store_key",key,"d",payload) 
-    # if key_hash_id < state.finger_table[0][0]:
-    #     if (key_hash_id < state.lowest_hash_id) and (key_hash_id < state.predecessor[0]) and (state.predecessor[0] > state.lowest_hash_id):
-    #         return sender(state.address,"store_key",key,"d",payload)
-    #     elif key_hash_id < state.lowest_hash_id: return sender(state.predecessor[1],"kvs/keys",key,"d",payload)
-    #     else: return sender(state.finger_table[0][1],"store_key",key,"d",payload)
-    # if key_hash_id > state.finger_table[-1][0]:
-    #     if state.finger_table[-1][0] == state.max_address[0]: 
-    #         return sender(state.min_address[1],"store_key",key,"d",payload)
-    #     else: return sender(state.finger_table[-1][1],"kvs/keys",key,"d",payload)
-    # if len(state.finger_table) > 1:
-    #     bounds = state.maps_to(key_hash_id)
-    #     if bounds["upper bound"][2] == 1:
-    #         pred_of_first_finger = state.immediate_pred(bounds["upper bound"][0])
-    #         if key_hash_id > pred_of_first_finger and key_hash_id <= bounds["upper bound"][0]:
-    #             return sender(bounds["upper bound"][1],"store_key",key,"d",payload)
-    #         elif key_hash_id > pred_of_first_finger and bounds["upper bound"][0] < bounds["lower bound"][0]:
-    #             return sender(bounds["upper bound"][1],"store_key",key,"d",payload)
-    #         else: return sender(bounds["lower bound"][1],"kvs/keys",key,"d",payload)
-    #     else: return sender(bounds["lower bound"][1],"kvs/keys",key,"d",payload)
-    # else: return sender(state.finger_table[0][1],"kvs/keys",key,"d",payload)
-    # return json.dumps({"message":"Server is down!"}), 400
-
 ######################### Storage Management Endpoints (final destinations muahahaha) ##################################
 
 @app.route('/store_key/<key>', methods=['PUT'])
