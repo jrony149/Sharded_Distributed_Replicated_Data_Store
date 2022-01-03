@@ -1,9 +1,14 @@
 #!/bin/bash
 
+#curl --request PUT \
+# --header "Content-Type: application/json" \
+# --write-out "%{http_code}\n" \
+# http://localhost:13801/kvs/keys/x
+
 curl --request GET \
  --header "Content-Type: application/json" \
  --write-out "%{http_code}\n" \
- http://localhost:13801/shard_list_test
+ http://localhost:13802/recon
 
 echo "--------------------------------------------------------------------------------------------"
 

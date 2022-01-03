@@ -3,5 +3,5 @@
 curl --request PUT \
  --header "Content-Type: application/json" \
  --write-out "%{http_code}\n" \
- --data '{"value":"127"}' \
- http://localhost:13801/kvs/keys/b
+ --data '{"value":149}' \
+ http://localhost:13802/kvs/keys/b

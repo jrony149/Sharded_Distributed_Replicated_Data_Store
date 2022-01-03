@@ -188,11 +188,29 @@ def handle_delete(key):
 @app.route('/store_key/<key>', methods=['PUT'])
 def store(key):
     global state
-    data               = request.get_json()
-    replace            = key in state.storage
-    message            = "Updated successfully" if replace else "Added successfully"
-    status_code        = 200 if replace else 201
-    state.storage[key] = data["value"]
+    data = request.get_json()
+
+    if "replication" not in data:
+        app.logger.info("hello from replication block in store()")
+        broadcast_set = [shard_mate for shard_mate in state.local_shard_list if shard_mate != state.address]
+        data["replication"] = True
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            futures = [executor.submit(sender,address,"store_key",key,"p",data) for address in broadcast_set]
+        # result_collection = [f.result() for f in futures]
+        # for x in range(len(result_collection)):
+        #     if result_collection[x][1] != 200:
+        #         return json.dumps({"message":"Data replication not fully successful."}), 500
+
+    replace = key in state.storage
+
+    if replace: 
+        local_addr_is_greater = state.storage[key]["address"] > data["address"]
+        if(not local_addr_is_greater): state.storage[key] = {"value": data["value"], "address":data["address"]}
+    if not replace:    
+        state.storage[key] = {"value": data["value"], "address":data["address"]}
+    
+    message     = "Updated successfully" if replace else "Added successfully"
+    status_code = 200 if replace else 201
     if data["address"] == state.address: return json.dumps({"message":message,"replaced":replace}), status_code
     else: return json.dumps({"message":message,"replaced":replace,"address":state.address}), status_code
 
@@ -203,8 +221,8 @@ def retrieve(key):
     data_present = key in state.storage
     if data_present: 
         if data["address"] == state.address:
-            return json.dumps({"doesExist":True, "message":"Retrieved successfully", "value": state.storage[key]}), 200
-        return json.dumps({"doesExist":True,"message":"Retrieved successfully","value":state.storage[key],"address":state.address}) 
+            return json.dumps({"doesExist":True, "message":"Retrieved successfully", "value": state.storage[key]["value"]}), 200
+        return json.dumps({"doesExist":True,"message":"Retrieved successfully","value":state.storage[key]["value"],"address":state.address}) 
     return json.dumps({"doesExist":False,"error":"Key does not exist","message":"Error in GET"}), 404
 
 @app.route('/store_key/<key>', methods=['DELETE'])
@@ -260,7 +278,6 @@ def hash_ids():
 
 @app.route('/shard_list_test', methods=["POST", "GET"])
 def sas_test():
-    
     
     return json.dumps({"global shard list":state.complete_shard_list, "local_shard_list":state.local_shard_list, "local shard number":state.shard_num}), 200
 

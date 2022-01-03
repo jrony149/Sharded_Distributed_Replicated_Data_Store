@@ -58,7 +58,7 @@ def sendViewChange(view, address):
     try:
         requests.put(address, headers=headers, data=payload)
     except requests.exceptions.ConnectionError as e:
-        print("server at local host " + adress + " timed out.")
+        print("server at local host " + address + " timed out.")
 
 async def sendKeys(numOfKeys, address):
 
